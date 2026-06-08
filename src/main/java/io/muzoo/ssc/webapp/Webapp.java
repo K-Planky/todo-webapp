@@ -1,14 +1,33 @@
 package io.muzoo.ssc.webapp;
 
 import io.muzoo.ssc.assignment.tracker.SscAssignment;
+import io.muzoo.ssc.webapp.db.Database;
 import io.muzoo.ssc.webapp.service.SecurityService;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class Webapp extends SscAssignment {
 
     public static void main(String[] args) {
+
+        DataSource dataSource = Database.createDataSource();
+        try (Connection c = dataSource.getConnection();
+             Statement s = c.createStatement();
+             ResultSet rs = s.executeQuery("SELECT 1")) {
+            rs.next();
+            System.out.println("Database connection OK");
+        } catch (SQLException e) {
+            throw new IllegalStateException("Cannot reach the database at startup", e);
+        }
+
+
         TomcatEnvironment.init();
         Tomcat tomcat = new Tomcat();
         tomcat.setBaseDir(TomcatEnvironment.getWorkDir().getAbsolutePath());
@@ -30,4 +49,5 @@ public class Webapp extends SscAssignment {
         }
         tomcat.getServer().await();
     }
+
 }
