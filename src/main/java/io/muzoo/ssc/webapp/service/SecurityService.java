@@ -1,43 +1,35 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.muzoo.ssc.webapp.service;
 
+import io.muzoo.ssc.webapp.model.User;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.commons.lang3.StringUtils;
+import jakarta.servlet.http.HttpSession;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
-/**
- *
- * @author gigadot
- */
 public class SecurityService {
 
-    private Map<String, String> userCredentials = new HashMap<String, String>() {{
-        put("admin", "123456");
-        put("muic", "1111");
-    }};
+    private final UserService userService;
 
-    public boolean isAuthorized(HttpServletRequest request) {
-        String username = (String) request.getSession()
-                .getAttribute("username");
-        // do checking
-        return (username != null && userCredentials.containsKey(username));
+    public SecurityService(UserService userService) {
+        this.userService = userService;
     }
 
     public boolean authenticate(String username, String password, HttpServletRequest request) {
-        String passwordInDB = userCredentials.get(username);
-        boolean isMatched = StringUtils.equals(password, passwordInDB);
-        if (isMatched) {
-            request.getSession().setAttribute("username", username);
+        Optional<User> user = userService.authenticate(username, password);
+
+        if (user.isPresent()) {
+            request.getSession();
+            request.changeSessionId();
+            request.getSession().setAttribute("userId", user.get().id());
+            request.getSession().setAttribute("username", user.get().username());
             return true;
-        } else {
-            return false;
         }
+        return false;
+    }
+
+    public boolean isAuthorized(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null && session.getAttribute("userId") != null;
     }
 
     public void logout(HttpServletRequest request) {

@@ -2,7 +2,12 @@ package io.muzoo.ssc.webapp;
 
 import io.muzoo.ssc.assignment.tracker.SscAssignment;
 import io.muzoo.ssc.webapp.db.Database;
+import io.muzoo.ssc.webapp.repository.DuplicateUsernameException;
+import io.muzoo.ssc.webapp.repository.UserRepository;
+import io.muzoo.ssc.webapp.service.BCryptPasswordEncoder;
+import io.muzoo.ssc.webapp.service.PasswordEncoder;
 import io.muzoo.ssc.webapp.service.SecurityService;
+import io.muzoo.ssc.webapp.service.UserService;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
@@ -34,7 +39,16 @@ public class Webapp extends SscAssignment {
         tomcat.setPort(8082);
         tomcat.getConnector();
 
-        SecurityService securityService = new SecurityService();
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+        UserRepository userRepository = new UserRepository(dataSource);
+        UserService userService = new UserService(userRepository, passwordEncoder);
+        SecurityService securityService = new SecurityService(userService);
+
+        try {
+            userService.register("alice", "password123");
+        } catch (DuplicateUsernameException ignored) {
+        }
+
         ServletRouter servletRouter = new ServletRouter();
         servletRouter.setSecurityService(securityService);
 
