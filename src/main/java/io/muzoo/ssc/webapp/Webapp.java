@@ -49,8 +49,7 @@ public class Webapp extends SscAssignment {
         } catch (DuplicateUsernameException ignored) {
         }
 
-        ServletRouter servletRouter = new ServletRouter();
-        servletRouter.setSecurityService(securityService);
+        ServletRouter servletRouter = new ServletRouter(securityService, userService);
 
         Context ctx = tomcat.addWebapp("", TomcatEnvironment.getDocBase().getAbsolutePath());
 

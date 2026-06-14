@@ -10,7 +10,6 @@ public class BCryptPasswordEncoder implements PasswordEncoder {
         this.cost = cost;
     }
 
-
     @Override
     public String encode(String rawPassword) {
         return BCrypt.withDefaults().hashToString(cost, rawPassword.toCharArray());
@@ -20,4 +19,5 @@ public class BCryptPasswordEncoder implements PasswordEncoder {
     public boolean matches(String rawPassword, String encodedPassword) {
         return BCrypt.verifyer().verify(rawPassword.toCharArray(), encodedPassword).verified;
     }
+    
 }

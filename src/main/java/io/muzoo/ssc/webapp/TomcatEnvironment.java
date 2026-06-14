@@ -46,7 +46,7 @@ public class TomcatEnvironment {
         File dstDir = new File(destDir);
         try (
                 FileInputStream fin = new FileInputStream(fileZip);
-                ZipInputStream zis = new ZipInputStream(fin);
+                ZipInputStream zis = new ZipInputStream(fin)
         ) {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
@@ -99,4 +99,5 @@ public class TomcatEnvironment {
     public static File getWorkDir() {
         return WORK_DIR;
     }
+
 }

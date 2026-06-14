@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.muzoo.ssc.webapp.servlet;
 
 import io.muzoo.ssc.webapp.Routable;
@@ -15,10 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-/**
- *
- * @author gigadot
- */
 public class HomeServlet extends HttpServlet implements Routable {
 
     private SecurityService securityService;
@@ -37,7 +28,6 @@ public class HomeServlet extends HttpServlet implements Routable {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         boolean authorized = securityService.isAuthorized(request);
         if (authorized) {
-            // do MVC in here
             String username = (String) request.getSession().getAttribute("username");
             request.setAttribute("username", username);
             RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/home.jsp");
@@ -46,4 +36,5 @@ public class HomeServlet extends HttpServlet implements Routable {
             response.sendRedirect("/login");
         }
     }
+    
 }

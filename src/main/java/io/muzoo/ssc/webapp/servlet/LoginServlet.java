@@ -21,11 +21,16 @@ public class LoginServlet extends HttpServlet implements Routable {
             request.setAttribute("error", flash);
             request.getSession().removeAttribute("flashError");
         }
+        Object message = request.getSession().getAttribute("flashMessage");
+        if (message != null) {
+            request.setAttribute("message", message);
+            request.getSession().removeAttribute("flashMessage");
+        }
         request.getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -52,4 +57,5 @@ public class LoginServlet extends HttpServlet implements Routable {
     public void setSecurityService(SecurityService securityService) {
         this.securityService = securityService;
     }
+
 }
