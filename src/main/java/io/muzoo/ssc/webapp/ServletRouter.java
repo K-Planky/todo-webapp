@@ -1,11 +1,10 @@
 package io.muzoo.ssc.webapp;
 
-import io.muzoo.ssc.webapp.service.SecurityService;
-import io.muzoo.ssc.webapp.service.UserService;
-import io.muzoo.ssc.webapp.service.UserServiceAware;
+import io.muzoo.ssc.webapp.service.*;
 import io.muzoo.ssc.webapp.servlet.HomeServlet;
 import io.muzoo.ssc.webapp.servlet.LoginServlet;
 import io.muzoo.ssc.webapp.servlet.RegisterServlet;
+import io.muzoo.ssc.webapp.servlet.TodosServlet;
 import jakarta.servlet.http.HttpServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
@@ -21,14 +20,17 @@ public class ServletRouter {
         routables.add(HomeServlet.class);
         routables.add(LoginServlet.class);
         routables.add(RegisterServlet.class);
+        routables.add(TodosServlet.class);
     }
 
     private final SecurityService securityService;
     private final UserService userService;
+    private final TodoService todoService;
 
-    public ServletRouter(SecurityService securityService, UserService userService) {
+    public ServletRouter(SecurityService securityService, UserService userService, TodoService todoService) {
         this.securityService = securityService;
         this.userService = userService;
+        this.todoService = todoService;
     }
 
     public void init(Context ctx) {
@@ -38,6 +40,9 @@ public class ServletRouter {
                 routable.setSecurityService(securityService);
                 if (routable instanceof UserServiceAware aware) {
                     aware.setUserService(userService);
+                }
+                if (routable instanceof TodoServiceAware aware) {
+                    aware.setTodoService(todoService);
                 }
                 String name = routable.getClass().getSimpleName();
                 Tomcat.addServlet(ctx, name, (HttpServlet) routable);

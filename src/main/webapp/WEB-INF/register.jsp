@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html>
 <head><title>Register</title></head>
@@ -8,7 +9,7 @@
 <form method="post"
       action="${pageContext.request.contextPath}/register">
     <label>Username <input type="text" name="username"
-                           value="${param.username}"></label><br>
+                           value="<c:out value='${param.username}'/>"></label><br>
     <label>Password <input type="password"
                            name="password"></label><br>
     <button type="submit">Register</button>

@@ -41,7 +41,7 @@ public class LoginServlet extends HttpServlet implements Routable {
         }
 
         if (securityService.authenticate(username, password, request)) {
-            response.sendRedirect("/");
+            response.sendRedirect("/todos");        // was "/"
         } else {
             request.getSession().setAttribute("flashError", "Invalid username or password");
             response.sendRedirect("/login");
