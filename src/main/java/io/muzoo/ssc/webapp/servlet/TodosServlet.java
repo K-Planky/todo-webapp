@@ -35,14 +35,9 @@ public class TodosServlet extends HttpServlet implements Routable, TodoServiceAw
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         Long userId = (Long) req.getSession().getAttribute("userId");
-        if (userId == null) {
-            resp.sendRedirect("/login");
-            return;
-        }
-
         List<Todo> todos = todoService.listForUser(userId);
+        
         req.setAttribute("todos", todos);
         req.getRequestDispatcher("/WEB-INF/todos.jsp").forward(req, resp);
     }

@@ -1,10 +1,7 @@
 package io.muzoo.ssc.webapp;
 
 import io.muzoo.ssc.webapp.service.*;
-import io.muzoo.ssc.webapp.servlet.HomeServlet;
-import io.muzoo.ssc.webapp.servlet.LoginServlet;
-import io.muzoo.ssc.webapp.servlet.RegisterServlet;
-import io.muzoo.ssc.webapp.servlet.TodosServlet;
+import io.muzoo.ssc.webapp.servlet.*;
 import jakarta.servlet.http.HttpServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
@@ -17,10 +14,11 @@ public class ServletRouter {
     private static final List<Class<? extends Routable>> routables = new ArrayList<>();
 
     static {
-        routables.add(HomeServlet.class);
         routables.add(LoginServlet.class);
         routables.add(RegisterServlet.class);
         routables.add(TodosServlet.class);
+        routables.add(LogoutServlet.class);
+        routables.add(NotFoundServlet.class);
     }
 
     private final SecurityService securityService;

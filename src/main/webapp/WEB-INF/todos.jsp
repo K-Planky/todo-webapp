@@ -6,6 +6,10 @@
 <body>
 <h1>To-Dos for <c:out value="${username}"/></h1>
 
+<form method="post" action="${pageContext.request.contextPath}/logout">
+    <button type="submit">Log out</button>
+</form>
+
 <table border="1" cellpadding="6">
     <thead>
     <tr>

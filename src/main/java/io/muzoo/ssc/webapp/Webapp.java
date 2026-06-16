@@ -2,12 +2,16 @@ package io.muzoo.ssc.webapp;
 
 import io.muzoo.ssc.assignment.tracker.SscAssignment;
 import io.muzoo.ssc.webapp.db.Database;
+import io.muzoo.ssc.webapp.filter.AuthFilter;
 import io.muzoo.ssc.webapp.repository.TodoRepository;
 import io.muzoo.ssc.webapp.repository.UserRepository;
 import io.muzoo.ssc.webapp.service.*;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.tomcat.util.descriptor.web.ErrorPage;
+import org.apache.tomcat.util.descriptor.web.FilterDef;
+import org.apache.tomcat.util.descriptor.web.FilterMap;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -29,7 +33,6 @@ public class Webapp extends SscAssignment {
             throw new IllegalStateException("Cannot reach the database at startup", e);
         }
 
-
         TomcatEnvironment.init();
         Tomcat tomcat = new Tomcat();
         tomcat.setBaseDir(TomcatEnvironment.getWorkDir().getAbsolutePath());
@@ -47,8 +50,24 @@ public class Webapp extends SscAssignment {
         ServletRouter servletRouter = new ServletRouter(securityService, userService, todoService);
 
         Context ctx = tomcat.addWebapp("", TomcatEnvironment.getDocBase().getAbsolutePath());
-
         servletRouter.init(ctx);
+
+        AuthFilter authFilter = new AuthFilter(securityService);
+
+        FilterDef filterDef = new FilterDef();
+        filterDef.setFilterName("AuthFilter");
+        filterDef.setFilter(authFilter);
+        ctx.addFilterDef(filterDef);
+
+        FilterMap filterMap = new FilterMap();
+        filterMap.setFilterName("AuthFilter");
+        filterMap.addURLPattern("/*");
+        ctx.addFilterMap(filterMap);
+
+        ErrorPage notFoundPage = new ErrorPage();
+        notFoundPage.setErrorCode(404);
+        notFoundPage.setLocation("/notFound");
+        ctx.addErrorPage(notFoundPage);
 
         try {
             tomcat.start();
