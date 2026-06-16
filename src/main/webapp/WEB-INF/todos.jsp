@@ -10,6 +10,8 @@
     <button type="submit">Log out</button>
 </form>
 
+<a href="${pageContext.request.contextPath}/add">Add a to-do</a>
+
 <table border="1" cellpadding="6">
     <thead>
     <tr>

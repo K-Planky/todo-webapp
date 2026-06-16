@@ -17,4 +17,11 @@ public class TodoService {
         return todoRepository.findByUserId(userId);
     }
 
+    public void add(long userId, String title) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("Title is required");
+        }
+        todoRepository.insert(userId, title.trim());
+    }
+
 }

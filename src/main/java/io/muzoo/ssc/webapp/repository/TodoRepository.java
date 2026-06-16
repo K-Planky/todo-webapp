@@ -47,4 +47,27 @@ public class TodoRepository {
         return todos;
     }
 
+    public Todo insert(long userId, String title) {
+
+        String sql = "INSERT INTO todos (user_id, title) VALUES (?, ?) RETURNING id, completed, created_at";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            ps.setString(2, title);
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return new Todo(
+                        rs.getLong("id"),
+                        userId,
+                        title,
+                        rs.getBoolean("completed"),
+                        rs.getObject("created_at", OffsetDateTime.class)
+                );
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to insert todo for user " + userId, e);
+        }
+    }
+
 }
