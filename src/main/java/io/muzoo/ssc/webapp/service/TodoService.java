@@ -36,4 +36,8 @@ public class TodoService {
         todoRepository.updateTitle(userId, id, title.trim());
     }
 
+    public void delete(long userId, long id) {
+        todoRepository.delete(userId, id);
+    }
+
 }

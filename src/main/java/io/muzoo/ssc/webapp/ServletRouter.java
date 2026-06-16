@@ -21,6 +21,7 @@ public class ServletRouter {
         routables.add(NotFoundServlet.class);
         routables.add(AddTodoServlet.class);
         routables.add(EditTodoServlet.class);
+        routables.add(DeleteTodoServlet.class);
     }
 
     private final SecurityService securityService;

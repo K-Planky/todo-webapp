@@ -110,4 +110,18 @@ public class TodoRepository {
         }
     }
 
+    public int delete(long userId, long id) {
+
+        String sql = "DELETE FROM todos WHERE user_id = ? AND id = ?";
+
+        try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            ps.setLong(2, id);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to delete todo " + id, e);
+        }
+
+    }
+
 }

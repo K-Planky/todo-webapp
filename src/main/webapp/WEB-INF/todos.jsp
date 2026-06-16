@@ -18,6 +18,7 @@
         <th>Title</th>
         <th>Status</th>
         <th></th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
@@ -33,11 +34,14 @@
             <td>
                 <a href="${pageContext.request.contextPath}/edit?id=${todo.id}">Edit</a>
             </td>
+            <td>
+                <a href="${pageContext.request.contextPath}/delete?id=${todo.id}">Delete</a>
+            </td>
         </tr>
     </c:forEach>
     <c:if test="${empty todos}">
         <tr>
-            <td colspan="3">No to-dos yet.</td>
+            <td colspan="4">No to-dos yet.</td>
         </tr>
     </c:if>
     </tbody>
