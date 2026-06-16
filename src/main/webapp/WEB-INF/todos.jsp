@@ -17,6 +17,7 @@
     <tr>
         <th>Title</th>
         <th>Status</th>
+        <th></th>
     </tr>
     </thead>
     <tbody>
@@ -29,11 +30,14 @@
                     <c:otherwise>Not done</c:otherwise>
                 </c:choose>
             </td>
+            <td>
+                <a href="${pageContext.request.contextPath}/edit?id=${todo.id}">Edit</a>
+            </td>
         </tr>
     </c:forEach>
     <c:if test="${empty todos}">
         <tr>
-            <td colspan="2">No to-dos yet.</td>
+            <td colspan="3">No to-dos yet.</td>
         </tr>
     </c:if>
     </tbody>

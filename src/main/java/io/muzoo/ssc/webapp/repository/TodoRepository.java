@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TodoRepository {
 
@@ -51,10 +52,10 @@ public class TodoRepository {
 
         String sql = "INSERT INTO todos (user_id, title) VALUES (?, ?) RETURNING id, completed, created_at";
 
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, userId);
             ps.setString(2, title);
+
             try (ResultSet rs = ps.executeQuery()) {
                 rs.next();
                 return new Todo(
@@ -67,6 +68,45 @@ public class TodoRepository {
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to insert todo for user " + userId, e);
+        }
+    }
+
+    public Optional<Todo> findByUserIdAndId(long userId, long id) {
+
+        String sql = "SELECT id, user_id, title, completed, created_at FROM todos WHERE user_id = ? AND id = ?";
+
+        try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            ps.setLong(2, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(new Todo(
+                            rs.getLong("id"),
+                            rs.getLong("user_id"),
+                            rs.getString("title"),
+                            rs.getBoolean("completed"),
+                            rs.getObject("created_at", OffsetDateTime.class)
+                    ));
+                }
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load todo " + id, e);
+        }
+    }
+
+    public int updateTitle(long userId, long id, String title) {
+
+        String sql = "UPDATE todos SET title = ? WHERE user_id = ? AND id = ?";
+
+        try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, title);
+            ps.setLong(2, userId);
+            ps.setLong(3, id);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update todo " + id, e);
         }
     }
 
