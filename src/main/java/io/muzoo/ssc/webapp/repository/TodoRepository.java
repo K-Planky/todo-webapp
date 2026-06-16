@@ -121,7 +121,20 @@ public class TodoRepository {
         } catch (SQLException e) {
             throw new RuntimeException("Failed to delete todo " + id, e);
         }
+    }
 
+    public int toggleCompleted(long userId, long id) {
+
+        String sql = "UPDATE todos SET completed = NOT completed WHERE user_id = ? AND id = ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+            ps.setLong(2, id);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to toggle todo " + id, e);
+        }
     }
 
 }

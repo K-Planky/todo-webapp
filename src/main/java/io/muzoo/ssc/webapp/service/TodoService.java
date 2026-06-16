@@ -40,4 +40,8 @@ public class TodoService {
         todoRepository.delete(userId, id);
     }
 
+    public void toggle(long userId, long id) {
+        todoRepository.toggleCompleted(userId, id);
+    }
+
 }

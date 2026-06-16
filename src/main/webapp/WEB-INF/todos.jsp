@@ -15,15 +15,29 @@
 <table border="1" cellpadding="6">
     <thead>
     <tr>
+        <th>Toggle</th>
         <th>Title</th>
         <th>Status</th>
-        <th></th>
-        <th></th>
+        <th>Edit</th>
+        <th>Delete</th>
     </tr>
     </thead>
     <tbody>
     <c:forEach var="todo" items="${todos}">
         <tr>
+            <td>
+                <form method="post" action="${pageContext.request.contextPath}/toggle" style="display:inline">
+                    <input type="hidden" name="id" value="${todo.id}">
+                    <c:choose>
+                        <c:when test="${todo.completed}">
+                            <button type="submit">Mark as not done</button>
+                        </c:when>
+                        <c:otherwise>
+                            <button type="submit">Mark as done</button>
+                        </c:otherwise>
+                    </c:choose>
+                </form>
+            </td>
             <td><c:out value="${todo.title}"/></td>
             <td>
                 <c:choose>
@@ -41,7 +55,7 @@
     </c:forEach>
     <c:if test="${empty todos}">
         <tr>
-            <td colspan="4">No to-dos yet.</td>
+            <td colspan="5">No to-dos yet.</td>
         </tr>
     </c:if>
     </tbody>
