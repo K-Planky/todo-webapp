@@ -3,8 +3,13 @@
 <c:set var="pageTitle" value="Edit to-do" scope="request"/>
 <%@ include file="/WEB-INF/layout/header.jsp" %>
 
-<div class="card form-narrow mx-auto mt-4">
-    <div class="card-body p-4">
+<a class="text-secondary small text-decoration-none d-inline-flex align-items-center gap-1 mb-3"
+   href="${pageContext.request.contextPath}/todos">
+    <i class="fa-solid fa-arrow-left"></i> Back to list
+</a>
+
+<div class="card form-narrow">
+    <div class="card-body p-4 p-sm-5">
         <h1 class="h4 mb-4">Edit to-do</h1>
 
         <c:if test="${not empty error}">

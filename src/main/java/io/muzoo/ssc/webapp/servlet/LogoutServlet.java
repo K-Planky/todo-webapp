@@ -26,7 +26,7 @@ public class LogoutServlet extends HttpServlet implements Routable, SecurityServ
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         securityService.logout(req);
-        resp.sendRedirect("/login");
+        resp.sendRedirect(req.getContextPath() + "/login");
     }
 
 }
