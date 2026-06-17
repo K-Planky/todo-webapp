@@ -2,7 +2,7 @@ package io.muzoo.ssc.webapp.servlet;
 
 import io.muzoo.ssc.webapp.Routable;
 import io.muzoo.ssc.webapp.model.Todo;
-import io.muzoo.ssc.webapp.service.SecurityService;
+import io.muzoo.ssc.webapp.service.SessionKeys;
 import io.muzoo.ssc.webapp.service.TodoService;
 import io.muzoo.ssc.webapp.service.TodoServiceAware;
 import jakarta.servlet.ServletException;
@@ -15,17 +15,11 @@ import java.util.List;
 
 public class TodosServlet extends HttpServlet implements Routable, TodoServiceAware {
 
-    private SecurityService securityService;
     private TodoService todoService;
 
     @Override
     public String getMapping() {
         return "/todos";
-    }
-
-    @Override
-    public void setSecurityService(SecurityService securityService) {
-        this.securityService = securityService;
     }
 
     @Override
@@ -35,9 +29,9 @@ public class TodosServlet extends HttpServlet implements Routable, TodoServiceAw
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long userId = (Long) req.getSession().getAttribute("userId");
+        long userId = (Long) req.getSession().getAttribute(SessionKeys.USER_ID);
         List<Todo> todos = todoService.listForUser(userId);
-        
+
         req.setAttribute("todos", todos);
         req.getRequestDispatcher("/WEB-INF/todos.jsp").forward(req, resp);
     }

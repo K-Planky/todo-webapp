@@ -4,7 +4,7 @@
 <h2>Login</h2>
 <p style="color:green">${message}</p>
 <p>${error}</p>
-<form action="/login" method="post">
+<form action="${pageContext.request.contextPath}/login" method="post">
     Username:<br/>
     <input type="text" name="username"/>
     <br/>

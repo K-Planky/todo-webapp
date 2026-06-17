@@ -2,6 +2,7 @@ package io.muzoo.ssc.webapp.servlet;
 
 import io.muzoo.ssc.webapp.Routable;
 import io.muzoo.ssc.webapp.service.SecurityService;
+import io.muzoo.ssc.webapp.service.SecurityServiceAware;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,41 +11,41 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 
-public class LoginServlet extends HttpServlet implements Routable {
+public class LoginServlet extends HttpServlet implements Routable, SecurityServiceAware {
 
     private SecurityService securityService;
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Object flash = request.getSession().getAttribute("flashError");
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Object flash = req.getSession().getAttribute("flashError");
         if (flash != null) {
-            request.setAttribute("error", flash);
-            request.getSession().removeAttribute("flashError");
+            req.setAttribute("error", flash);
+            req.getSession().removeAttribute("flashError");
         }
-        Object message = request.getSession().getAttribute("flashMessage");
+        Object message = req.getSession().getAttribute("flashMessage");
         if (message != null) {
-            request.setAttribute("message", message);
-            request.getSession().removeAttribute("flashMessage");
+            req.setAttribute("message", message);
+            req.getSession().removeAttribute("flashMessage");
         }
-        request.getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+        req.getRequestDispatcher("/WEB-INF/login.jsp").forward(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
 
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
-            request.getSession().setAttribute("flashError", "Username or password is missing.");
-            response.sendRedirect("/login");
+            req.getSession().setAttribute("flashError", "Username or password is missing.");
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
-        if (securityService.authenticate(username, password, request)) {
-            response.sendRedirect("/todos");        // was "/"
+        if (securityService.authenticate(username, password, req)) {
+            resp.sendRedirect(req.getContextPath() + "/todos");
         } else {
-            request.getSession().setAttribute("flashError", "Invalid username or password");
-            response.sendRedirect("/login");
+            req.getSession().setAttribute("flashError", "Invalid username or password");
+            resp.sendRedirect(req.getContextPath() + "/login");
         }
     }
 

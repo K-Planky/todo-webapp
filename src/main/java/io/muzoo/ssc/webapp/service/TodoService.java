@@ -18,22 +18,23 @@ public class TodoService {
         return todoRepository.findByUserId(userId);
     }
 
-    public void add(long userId, String title) {
-        if (title == null || title.isBlank()) {
-            throw new IllegalArgumentException("Title is required");
-        }
-        todoRepository.insert(userId, title.trim());
-    }
-
     public Optional<Todo> getForUser(long userId, long id) {
         return todoRepository.findByUserIdAndId(userId, id);
     }
 
-    public void updateTitle(long userId, long id, String title) {
+    private String requireTitle(String title) {
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Title is required");
         }
-        todoRepository.updateTitle(userId, id, title.trim());
+        return title.trim();
+    }
+
+    public void add(long userId, String title) {
+        todoRepository.insert(userId, requireTitle(title));
+    }
+
+    public void updateTitle(long userId, long id, String title) {
+        todoRepository.updateTitle(userId, id, requireTitle(title));
     }
 
     public void delete(long userId, long id) {

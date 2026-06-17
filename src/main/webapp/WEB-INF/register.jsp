@@ -8,10 +8,9 @@
 <p style="color:red">${error}</p>
 <form method="post"
       action="${pageContext.request.contextPath}/register">
-    <label>Username <input type="text" name="username"
-                           value="<c:out value='${param.username}'/>"></label><br>
-    <label>Password <input type="password"
-                           name="password"></label><br>
+    <label>Username <input type="text" name="username" value="<c:out value='${param.username}'/>"></label><br>
+    <label>Password <input type="password" name="password"></label><br>
+    <label>Confirm password <input type="password" name="confirmPassword"></label><br>
     <button type="submit">Register</button>
     <a href="${pageContext.request.contextPath}/login">Cancel</a>
 </form>

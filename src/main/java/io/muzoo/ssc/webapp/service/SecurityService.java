@@ -18,10 +18,10 @@ public class SecurityService {
         Optional<User> user = userService.authenticate(username, password);
 
         if (user.isPresent()) {
-            request.getSession();
+            HttpSession session = request.getSession();
             request.changeSessionId();
-            request.getSession().setAttribute("userId", user.get().id());
-            request.getSession().setAttribute("username", user.get().username());
+            session.setAttribute(SessionKeys.USER_ID, user.get().id());
+            session.setAttribute(SessionKeys.USERNAME, user.get().username());
             return true;
         }
         return false;
@@ -29,7 +29,7 @@ public class SecurityService {
 
     public boolean isAuthorized(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        return session != null && session.getAttribute("userId") != null;
+        return session != null && session.getAttribute(SessionKeys.USER_ID) != null;
     }
 
     public void logout(HttpServletRequest request) {

@@ -39,7 +39,9 @@ public class ServletRouter {
         for (Class<? extends Routable> routableClass : routables) {
             try {
                 Routable routable = routableClass.getDeclaredConstructor().newInstance();
-                routable.setSecurityService(securityService);
+                if (routable instanceof SecurityServiceAware aware) {
+                    aware.setSecurityService(securityService);
+                }
                 if (routable instanceof UserServiceAware aware) {
                     aware.setUserService(userService);
                 }
