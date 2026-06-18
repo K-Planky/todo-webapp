@@ -23,8 +23,8 @@
             <input type="hidden" name="id" value="${todo.id}">
             <div class="mb-4">
                 <label class="form-label" for="title">Title</label>
-                <textarea class="form-control title-field" id="title" name="title" rows="2" maxlength="255"
-                          autofocus><c:out value='${todo.title}'/></textarea>
+                <input class="form-control" id="title" name="title" maxlength="255"
+                       value="<c:out value='${todo.title}'/>">
             </div>
             <div class="d-flex justify-content-end gap-2">
                 <a class="btn btn-link text-secondary text-decoration-none"
@@ -35,5 +35,15 @@
     </div>
 </div>
 </div>
+
+<script>
+    (function () {
+        var t = document.getElementById('title');
+        if (t) {
+            t.focus();
+            t.setSelectionRange(t.value.length, t.value.length);
+        }
+    })();
+</script>
 
 <%@ include file="/WEB-INF/layout/footer.jsp" %>

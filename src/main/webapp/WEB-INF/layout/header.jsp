@@ -326,14 +326,6 @@
             color: var(--neb-muted);
         }
 
-        /* title editor: wrap long titles instead of horizontal scroll; auto-grows to fit where supported */
-        textarea.title-field {
-            field-sizing: content;
-            min-height: calc(3em + 1.2rem);
-            max-height: 40vh;
-            resize: vertical;
-        }
-
         .form-label {
             font-weight: 500;
             font-size: .9rem;

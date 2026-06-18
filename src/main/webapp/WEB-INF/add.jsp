@@ -22,8 +22,8 @@
         <form method="post" action="${pageContext.request.contextPath}/add">
             <div class="mb-4">
                 <label class="form-label" for="title">Title</label>
-                <textarea class="form-control title-field" id="title" name="title" rows="2" maxlength="255"
-                          autofocus><c:out value='${param.title}'/></textarea>
+                <input class="form-control" id="title" name="title" maxlength="255"
+                       value="<c:out value='${param.title}'/>" autofocus>
             </div>
             <div class="d-flex justify-content-end gap-2">
                 <a class="btn btn-link text-secondary text-decoration-none"
