@@ -3,11 +3,13 @@ package io.muzoo.ssc.webapp.service;
 import io.muzoo.ssc.webapp.model.User;
 import io.muzoo.ssc.webapp.repository.UserRepository;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 public class UserService {
 
     private static final int MAX_USERNAME_LENGTH = 50;
+    private static final int MAX_PASSWORD_BYTES = 72;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -29,6 +31,9 @@ public class UserService {
         }
         if (rawPassword == null || rawPassword.length() < 8) {
             throw new IllegalArgumentException("Password must be at least 8 characters");
+        }
+        if (rawPassword.getBytes(StandardCharsets.UTF_8).length > MAX_PASSWORD_BYTES) {
+            throw new IllegalArgumentException("Password must be " + MAX_PASSWORD_BYTES + " characters or fewer");
         }
 
         String hash = passwordEncoder.encode(rawPassword);

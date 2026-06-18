@@ -70,30 +70,20 @@ public class TodoRepository {
         }
     }
 
-    public Todo insert(long userId, String title) {
+    public void insert(long userId, String title) {
 
-        String sql = "INSERT INTO todos (user_id, title) VALUES (?, ?) RETURNING id, completed, created_at";
+        String sql = "INSERT INTO todos (user_id, title) VALUES (?, ?)";
 
         try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, userId);
             ps.setString(2, title);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                rs.next();
-                return new Todo(
-                        rs.getLong("id"),
-                        userId,
-                        title,
-                        rs.getBoolean("completed"),
-                        rs.getObject("created_at", OffsetDateTime.class)
-                );
-            }
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to insert todo for user " + userId, e);
         }
     }
 
-    public int updateTitle(long userId, long id, String title) {
+    public void updateTitle(long userId, long id, String title) {
 
         String sql = "UPDATE todos SET title = ? WHERE user_id = ? AND id = ?";
 
@@ -101,26 +91,26 @@ public class TodoRepository {
             ps.setString(1, title);
             ps.setLong(2, userId);
             ps.setLong(3, id);
-            return ps.executeUpdate();
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to update todo " + id, e);
         }
     }
 
-    public int delete(long userId, long id) {
+    public void delete(long userId, long id) {
 
         String sql = "DELETE FROM todos WHERE user_id = ? AND id = ?";
 
         try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, userId);
             ps.setLong(2, id);
-            return ps.executeUpdate();
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to delete todo " + id, e);
         }
     }
 
-    public int toggleCompleted(long userId, long id) {
+    public void toggleCompleted(long userId, long id) {
 
         String sql = "UPDATE todos SET completed = NOT completed WHERE user_id = ? AND id = ?";
 
@@ -128,7 +118,7 @@ public class TodoRepository {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, userId);
             ps.setLong(2, id);
-            return ps.executeUpdate();
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to toggle todo " + id, e);
         }

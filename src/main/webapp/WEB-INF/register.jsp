@@ -27,11 +27,11 @@
             </div>
             <div class="mb-3">
                 <label class="form-label" for="password">Password</label>
-                <input class="form-control" id="password" name="password" type="password">
+                <input class="form-control" id="password" name="password" type="password" maxlength="72">
             </div>
             <div class="mb-4">
                 <label class="form-label" for="confirmPassword">Confirm password</label>
-                <input class="form-control" id="confirmPassword" name="confirmPassword" type="password">
+                <input class="form-control" id="confirmPassword" name="confirmPassword" type="password" maxlength="72">
             </div>
             <button class="btn btn-primary w-100 py-2" type="submit">Create account</button>
         </form>
