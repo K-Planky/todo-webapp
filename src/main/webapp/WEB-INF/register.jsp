@@ -22,7 +22,7 @@
         <form method="post" action="${pageContext.request.contextPath}/register">
             <div class="mb-3">
                 <label class="form-label" for="username">Username</label>
-                <input class="form-control" id="username" name="username"
+                <input class="form-control" id="username" name="username" maxlength="50"
                        value="<c:out value='${param.username}'/>" autofocus>
             </div>
             <div class="mb-3">

@@ -22,11 +22,17 @@ public class TodoService {
         return todoRepository.findByUserIdAndId(userId, id);
     }
 
+    private static final int MAX_TITLE_LENGTH = 255;
+
     private String requireTitle(String title) {
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Title is required");
         }
-        return title.trim();
+        String trimmed = title.trim();
+        if (trimmed.length() > MAX_TITLE_LENGTH) {
+            throw new IllegalArgumentException("Title must be " + MAX_TITLE_LENGTH + " characters or fewer");
+        }
+        return trimmed;
     }
 
     public void add(long userId, String title) {

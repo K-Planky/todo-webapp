@@ -8,15 +8,15 @@
     <c:if test="${t.completed}"><c:set var="doneCount" value="${doneCount + 1}"/></c:if>
 </c:forEach>
 
-<div class="d-flex align-items-end justify-content-between mb-4">
-    <div>
-        <h1 class="h3 mb-1">Your to-dos</h1>
+<div class="d-flex align-items-start justify-content-between mb-4">
+    <div class="d-flex align-items-baseline gap-3">
+        <h1 class="h3 mb-0">Your to-dos</h1>
         <c:choose>
             <c:when test="${empty todos}">
-                <p class="text-secondary small mb-0">Nothing here yet — add your first task.</p>
+                <span class="text-secondary small">No tasks yet</span>
             </c:when>
             <c:otherwise>
-                <p class="text-secondary small mb-0">${doneCount} of ${todos.size()} done</p>
+                <span class="text-secondary small">${doneCount} of ${todos.size()} done</span>
             </c:otherwise>
         </c:choose>
     </div>
@@ -48,7 +48,7 @@
                     </c:choose>
                 </form>
 
-                <span class="flex-grow-1 ${todo.completed ? 'text-decoration-line-through text-muted' : ''}">
+                <span class="todo-title flex-grow-1 ${todo.completed ? 'text-decoration-line-through text-muted' : ''}">
                     <c:out value="${todo.title}"/>
                 </span>
 
@@ -65,9 +65,6 @@
 
         <c:if test="${empty todos}">
             <li class="list-group-item text-center text-muted py-5">
-                <span class="brand-mark brand-mark-lg mx-auto mb-3 opacity-75">
-                    <i class="fa-regular fa-square-check"></i>
-                </span>
                 <p class="mb-1 fw-medium text-body">All clear.</p>
                 <p class="small mb-0">Add your first to-do to get started.</p>
             </li>

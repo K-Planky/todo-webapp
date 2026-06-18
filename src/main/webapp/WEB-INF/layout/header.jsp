@@ -65,9 +65,9 @@
         /* night sky — flat, with a faint moon and horizon glow */
         body {
             background-color: var(--neb-bg);
-            background-image:
-                radial-gradient(circle at 86% 13%, #e8edf2 0, #e8edf2 15px, transparent 16px),
-                radial-gradient(130% 24vh at 50% 100%, rgba(150, 180, 205, .10), transparent 72%);
+            background-image: /* moon — bright disc */ radial-gradient(circle at 86% 12%, #f3f6f9 0, #eaeff5 26px, rgba(234, 239, 245, 0) 29px),
+                /* moon — glow (single smooth falloff) */ radial-gradient(circle at 86% 12%, rgba(214, 228, 240, .13) 26px, rgba(200, 220, 235, .098) 34px, rgba(184, 210, 228, .072) 44px, rgba(168, 198, 222, .05) 58px, rgba(156, 190, 218, .034) 78px, rgba(150, 184, 214, .022) 105px, rgba(150, 184, 214, .013) 145px, rgba(150, 184, 214, .006) 200px, rgba(150, 184, 214, .002) 270px, rgba(150, 184, 214, 0) 320px),
+                /* horizon glow */ radial-gradient(130% 26vh at 50% 100%, rgba(150, 180, 205, .12), transparent 72%);
             background-repeat: no-repeat;
             background-attachment: fixed;
             font-weight: 450;
@@ -106,42 +106,88 @@
         }
 
         /* stars (flat, sharp) — biased to the upper sky */
+        /*
+         * Stars live in two interleaved layers (::before = A, ::after = B) that
+         * twinkle in mirror opposition: as A dims to .75, B brightens to 1 and
+         * vice-versa, so the total light on screen stays constant — neighbouring
+         * stars shimmer out of phase, with no global pulse. z-index -2 keeps both
+         * behind the treeline; the prefers-reduced-motion block below freezes them.
+         */
         body::before {
             content: "";
             position: fixed;
             inset: 0;
-            z-index: -1;
+            z-index: -2;
             pointer-events: none;
-            background-image: radial-gradient(1.4px 1.4px at 12% 14%, rgba(255, 255, 255, .90), transparent),
-            radial-gradient(1px 1px at 24% 30%, rgba(255, 255, 255, .55), transparent),
-            radial-gradient(1.5px 1.5px at 38% 10%, rgba(219, 234, 254, .85), transparent),
-            radial-gradient(1px 1px at 47% 26%, rgba(255, 255, 255, .50), transparent),
-            radial-gradient(1.3px 1.3px at 56% 8%, rgba(255, 255, 255, .80), transparent),
-            radial-gradient(1px 1px at 62% 34%, rgba(255, 241, 214, .70), transparent),
-            radial-gradient(1.5px 1.5px at 73% 16%, rgba(255, 255, 255, .85), transparent),
-            radial-gradient(1px 1px at 80% 30%, rgba(255, 255, 255, .55), transparent),
-            radial-gradient(1.3px 1.3px at 90% 12%, rgba(219, 234, 254, .75), transparent),
-            radial-gradient(1px 1px at 93% 40%, rgba(255, 255, 255, .55), transparent),
-            radial-gradient(1px 1px at 7% 40%, rgba(255, 255, 255, .50), transparent),
-            radial-gradient(1.2px 1.2px at 18% 52%, rgba(255, 255, 255, .55), transparent),
-            radial-gradient(1px 1px at 33% 46%, rgba(255, 255, 255, .45), transparent),
-            radial-gradient(1.3px 1.3px at 44% 40%, rgba(255, 241, 214, .60), transparent),
-            radial-gradient(1px 1px at 52% 54%, rgba(255, 255, 255, .50), transparent),
-            radial-gradient(1.3px 1.3px at 67% 44%, rgba(255, 255, 255, .70), transparent),
-            radial-gradient(1px 1px at 84% 50%, rgba(219, 234, 254, .55), transparent),
-            radial-gradient(1.4px 1.4px at 96% 24%, rgba(255, 255, 255, .75), transparent),
-            radial-gradient(1px 1px at 28% 6%, rgba(255, 255, 255, .55), transparent),
-            radial-gradient(1.2px 1.2px at 60% 60%, rgba(255, 255, 255, .55), transparent);
+            background-image:
+                /* layer A — feature */
+            radial-gradient(2.4px 2.4px at 14% 15%, #ffffff 0, rgba(255, 255, 255, .95) 38%, transparent 72%),
+            radial-gradient(2.2px 2.2px at 38% 39%, #ffffff 0, rgba(255, 255, 255, .92) 40%, transparent 74%),
+            radial-gradient(2.1px 2.1px at 24% 52%, #ffffff 0, rgba(255, 255, 255, .88) 42%, transparent 76%),
+                /* layer A — mid */
+            radial-gradient(1.7px 1.7px at 30% 9%, rgba(255, 255, 255, .80), transparent),
+            radial-gradient(1.7px 1.7px at 56% 14%, rgba(255, 255, 255, .76), transparent),
+            radial-gradient(1.7px 1.7px at 18% 43%, rgba(255, 255, 255, .72), transparent),
+            radial-gradient(1.7px 1.7px at 63% 45%, rgba(219, 234, 254, .70), transparent),
+            radial-gradient(1.7px 1.7px at 95% 35%, rgba(255, 255, 255, .68), transparent),
+                /* layer A — faint */
+            radial-gradient(1.3px 1.3px at 5% 12%, rgba(255, 255, 255, .65), transparent),
+            radial-gradient(1.3px 1.3px at 33% 33%, rgba(255, 255, 255, .60), transparent),
+            radial-gradient(1.3px 1.3px at 60% 29%, rgba(255, 255, 255, .60), transparent),
+            radial-gradient(1.3px 1.3px at 11% 54%, rgba(255, 255, 255, .58), transparent),
+            radial-gradient(1.3px 1.3px at 53% 37%, rgba(255, 255, 255, .60), transparent),
+            radial-gradient(1.3px 1.3px at 78% 44%, rgba(255, 255, 255, .58), transparent),
+            radial-gradient(1.3px 1.3px at 16% 8%, rgba(255, 255, 255, .58), transparent);
             background-repeat: no-repeat;
+            animation: star-twinkle-a 10s ease-in-out infinite;
         }
 
-        /* forest treeline (two layered triangle patterns) */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+            background-image:
+                /* layer B — feature */
+            radial-gradient(2.3px 2.3px at 67% 11%, #e8f0ff 0, rgba(219, 234, 254, .92) 40%, transparent 74%),
+            radial-gradient(2.3px 2.3px at 13% 38%, #fff4dd 0, rgba(255, 241, 214, .90) 40%, transparent 74%),
+                /* layer B — mid */
+            radial-gradient(1.7px 1.7px at 8% 29%, rgba(255, 255, 255, .78), transparent),
+            radial-gradient(1.8px 1.8px at 45% 23%, rgba(219, 234, 254, .78), transparent),
+            radial-gradient(1.8px 1.8px at 72% 35%, rgba(255, 241, 214, .72), transparent),
+            radial-gradient(1.8px 1.8px at 50% 49%, rgba(255, 255, 255, .74), transparent),
+            radial-gradient(1.7px 1.7px at 84% 51%, rgba(255, 255, 255, .70), transparent),
+            radial-gradient(1.7px 1.7px at 40% 57%, rgba(255, 255, 255, .68), transparent),
+                /* layer B — faint */
+            radial-gradient(1.3px 1.3px at 22% 25%, rgba(255, 255, 255, .62), transparent),
+            radial-gradient(1.3px 1.3px at 48% 8%, rgba(219, 234, 254, .62), transparent),
+            radial-gradient(1.3px 1.3px at 75% 17%, rgba(255, 255, 255, .62), transparent),
+            radial-gradient(1.3px 1.3px at 28% 60%, rgba(255, 255, 255, .56), transparent),
+            radial-gradient(1.3px 1.3px at 66% 58%, rgba(219, 234, 254, .55), transparent),
+            radial-gradient(1.3px 1.3px at 92% 56%, rgba(255, 255, 255, .55), transparent),
+            radial-gradient(1.3px 1.3px at 70% 25%, rgba(255, 255, 255, .60), transparent);
+            background-repeat: no-repeat;
+            animation: star-twinkle-b 10s ease-in-out infinite;
+        }
+
+        @keyframes star-twinkle-a {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .75; }
+        }
+
+        @keyframes star-twinkle-b {
+            0%, 100% { opacity: .75; }
+            50% { opacity: 1; }
+        }
+
+        /* forest treeline (three layered triangle patterns) */
         .night-scene {
             position: fixed;
             left: 0;
             right: 0;
             bottom: 0;
-            height: 200px;
+            height: 280px;
             z-index: -1;
             pointer-events: none;
         }
@@ -150,6 +196,18 @@
             display: block;
             width: 100%;
             height: 100%;
+        }
+
+        /* mist hazing the base of the treeline */
+        .night-scene::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 130px;
+            background: linear-gradient(to top, rgba(150, 180, 205, .13) 0, rgba(150, 180, 205, .045) 50%, transparent 100%);
+            pointer-events: none;
         }
 
         h1, h2, h3, h4, h5, h6, .brand-name {
@@ -268,6 +326,14 @@
             color: var(--neb-muted);
         }
 
+        /* title editor: wrap long titles instead of horizontal scroll; auto-grows to fit where supported */
+        textarea.title-field {
+            field-sizing: content;
+            min-height: calc(3em + 1.2rem);
+            max-height: 40vh;
+            resize: vertical;
+        }
+
         .form-label {
             font-weight: 500;
             font-size: .9rem;
@@ -289,7 +355,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 2rem 1rem 3rem;
+            padding: 4vh 1rem 12vh;
         }
 
         /* to-do list */
@@ -303,6 +369,12 @@
 
         .todo-item.is-done {
             opacity: .55;
+        }
+
+        /* title shrinks + wraps (incl. long unbroken words) so the row actions never get pushed out */
+        .todo-title {
+            min-width: 0;
+            overflow-wrap: anywhere;
         }
 
         .todo-item form .btn:hover {
@@ -329,6 +401,8 @@
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
                 transition-duration: .01ms !important;
             }
         }
@@ -336,33 +410,45 @@
 </head>
 <body>
 <div class="night-scene" aria-hidden="true">
-    <svg width="100%" height="200" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="280" xmlns="http://www.w3.org/2000/svg">
         <defs>
-            <pattern id="trees-back" width="470" height="200" patternUnits="userSpaceOnUse">
-                <g fill="#10182a">
-                    <polygon points="14,200 38,120 62,200"/>
-                    <polygon points="84,200 105,134 126,200"/>
-                    <polygon points="147,200 172,112 197,200"/>
-                    <polygon points="217,200 239,130 261,200"/>
-                    <polygon points="282,200 306,118 330,200"/>
-                    <polygon points="352,200 373,132 394,200"/>
-                    <polygon points="416,200 440,116 464,200"/>
+            <pattern id="trees-back" width="368" height="280" patternUnits="userSpaceOnUse">
+                <g fill="#0f1729">
+                    <polygon points="5,280 23,192 41,280"/>
+                    <polygon points="51,280 69,180 87,280"/>
+                    <polygon points="97,280 115,198 133,280"/>
+                    <polygon points="143,280 161,186 179,280"/>
+                    <polygon points="189,280 207,194 225,280"/>
+                    <polygon points="235,280 253,182 271,280"/>
+                    <polygon points="281,280 299,196 317,280"/>
+                    <polygon points="327,280 345,184 363,280"/>
                 </g>
             </pattern>
-            <pattern id="trees-front" width="560" height="200" patternUnits="userSpaceOnUse">
-                <g fill="#06090e">
-                    <polygon points="15,200 45,72 75,200"/>
-                    <polygon points="99,200 125,100 151,200"/>
-                    <polygon points="172,200 205,55 238,200"/>
-                    <polygon points="258,200 285,95 312,200"/>
-                    <polygon points="334,200 365,64 396,200"/>
-                    <polygon points="419,200 445,102 471,200"/>
-                    <polygon points="495,200 525,78 555,200"/>
+            <pattern id="trees-mid" width="364" height="280" patternUnits="userSpaceOnUse">
+                <g fill="#070c15">
+                    <polygon points="3,280 26,150 49,280"/>
+                    <polygon points="55,280 78,138 101,280"/>
+                    <polygon points="107,280 130,162 153,280"/>
+                    <polygon points="159,280 182,146 205,280"/>
+                    <polygon points="211,280 234,158 257,280"/>
+                    <polygon points="263,280 286,142 309,280"/>
+                    <polygon points="315,280 338,166 361,280"/>
+                </g>
+            </pattern>
+            <pattern id="trees-front" width="348" height="280" patternUnits="userSpaceOnUse">
+                <g fill="#04060c">
+                    <polygon points="2,280 29,104 56,280"/>
+                    <polygon points="60,280 87,88 114,280"/>
+                    <polygon points="118,280 145,122 172,280"/>
+                    <polygon points="176,280 203,98 230,280"/>
+                    <polygon points="234,280 261,128 288,280"/>
+                    <polygon points="292,280 319,94 346,280"/>
                 </g>
             </pattern>
         </defs>
-        <rect width="100%" height="200" fill="url(#trees-back)"/>
-        <rect width="100%" height="200" fill="url(#trees-front)"/>
+        <rect width="100%" height="280" fill="url(#trees-back)"/>
+        <rect width="100%" height="280" fill="url(#trees-mid)"/>
+        <rect width="100%" height="280" fill="url(#trees-front)"/>
     </svg>
 </div>
 <c:if test="${not empty username}">
@@ -373,10 +459,10 @@
             <span class="brand-name">Todo</span>
         </a>
         <div class="d-flex align-items-center gap-3">
-            <span class="text-secondary small">
+            <span class="text-secondary small d-inline-flex align-items-center">
                 <i class="fa-regular fa-user me-1"></i><c:out value="${username}"/>
             </span>
-            <form method="post" action="${pageContext.request.contextPath}/logout" class="m-0">
+            <form method="post" action="${pageContext.request.contextPath}/logout" class="m-0 d-flex align-items-center">
                 <button type="submit" class="btn btn-sm btn-link text-secondary text-decoration-none p-0">
                     Log out
                 </button>
