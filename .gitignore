@@ -36,3 +36,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+### Course / AI-tutor working files (not part of the product)
+CLAUDE.md
+.claude/
+REQUIREMENTS.md
+PRINCIPLES.md
+docs/
+assets/
