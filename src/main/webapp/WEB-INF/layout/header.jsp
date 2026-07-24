@@ -56,17 +56,17 @@
             /* type */
             --bs-body-font-family: 'Inter', system-ui, -apple-system, sans-serif;
 
-            /* shape — sharp */
+            /* shape, sharp */
             --bs-border-radius: .25rem;
             --bs-border-radius-lg: .375rem;
             --bs-border-radius-xl: .5rem;
         }
 
-        /* night sky — flat, with a faint moon and horizon glow */
+        /* night sky, flat, with a faint moon and horizon glow */
         body {
             background-color: var(--neb-bg);
-            background-image: /* moon — bright disc */ radial-gradient(circle at 86% 12%, #f3f6f9 0, #eaeff5 26px, rgba(234, 239, 245, 0) 29px),
-                /* moon — glow (single smooth falloff) */ radial-gradient(circle at 86% 12%, rgba(214, 228, 240, .13) 26px, rgba(200, 220, 235, .098) 34px, rgba(184, 210, 228, .072) 44px, rgba(168, 198, 222, .05) 58px, rgba(156, 190, 218, .034) 78px, rgba(150, 184, 214, .022) 105px, rgba(150, 184, 214, .013) 145px, rgba(150, 184, 214, .006) 200px, rgba(150, 184, 214, .002) 270px, rgba(150, 184, 214, 0) 320px),
+            background-image: /* moon, bright disc */ radial-gradient(circle at 86% 12%, #f3f6f9 0, #eaeff5 26px, rgba(234, 239, 245, 0) 29px),
+                /* moon, glow (single smooth falloff) */ radial-gradient(circle at 86% 12%, rgba(214, 228, 240, .13) 26px, rgba(200, 220, 235, .098) 34px, rgba(184, 210, 228, .072) 44px, rgba(168, 198, 222, .05) 58px, rgba(156, 190, 218, .034) 78px, rgba(150, 184, 214, .022) 105px, rgba(150, 184, 214, .013) 145px, rgba(150, 184, 214, .006) 200px, rgba(150, 184, 214, .002) 270px, rgba(150, 184, 214, 0) 320px),
                 /* horizon glow */ radial-gradient(130% 26vh at 50% 100%, rgba(150, 180, 205, .12), transparent 72%);
             background-repeat: no-repeat;
             background-attachment: fixed;
@@ -105,11 +105,11 @@
             background: #3a4658;
         }
 
-        /* stars (flat, sharp) — biased to the upper sky */
+        /* stars (flat, sharp), biased to the upper sky */
         /*
          * Stars live in two interleaved layers (::before = A, ::after = B) that
          * twinkle in mirror opposition: as A dims to .75, B brightens to 1 and
-         * vice-versa, so the total light on screen stays constant — neighbouring
+         * vice-versa, so the total light on screen stays constant, neighbouring
          * stars shimmer out of phase, with no global pulse. z-index -2 keeps both
          * behind the treeline; the prefers-reduced-motion block below freezes them.
          */
@@ -120,17 +120,17 @@
             z-index: -2;
             pointer-events: none;
             background-image:
-                /* layer A — feature */
+                /* layer A, feature */
             radial-gradient(2.4px 2.4px at 14% 15%, #ffffff 0, rgba(255, 255, 255, .95) 38%, transparent 72%),
             radial-gradient(2.2px 2.2px at 38% 39%, #ffffff 0, rgba(255, 255, 255, .92) 40%, transparent 74%),
             radial-gradient(2.1px 2.1px at 24% 52%, #ffffff 0, rgba(255, 255, 255, .88) 42%, transparent 76%),
-                /* layer A — mid */
+                /* layer A, mid */
             radial-gradient(1.7px 1.7px at 30% 9%, rgba(255, 255, 255, .80), transparent),
             radial-gradient(1.7px 1.7px at 56% 14%, rgba(255, 255, 255, .76), transparent),
             radial-gradient(1.7px 1.7px at 18% 43%, rgba(255, 255, 255, .72), transparent),
             radial-gradient(1.7px 1.7px at 63% 45%, rgba(219, 234, 254, .70), transparent),
             radial-gradient(1.7px 1.7px at 95% 35%, rgba(255, 255, 255, .68), transparent),
-                /* layer A — faint */
+                /* layer A, faint */
             radial-gradient(1.3px 1.3px at 5% 12%, rgba(255, 255, 255, .65), transparent),
             radial-gradient(1.3px 1.3px at 33% 33%, rgba(255, 255, 255, .60), transparent),
             radial-gradient(1.3px 1.3px at 60% 29%, rgba(255, 255, 255, .60), transparent),
@@ -149,17 +149,17 @@
             z-index: -2;
             pointer-events: none;
             background-image:
-                /* layer B — feature */
+                /* layer B, feature */
             radial-gradient(2.3px 2.3px at 67% 11%, #e8f0ff 0, rgba(219, 234, 254, .92) 40%, transparent 74%),
             radial-gradient(2.3px 2.3px at 13% 38%, #fff4dd 0, rgba(255, 241, 214, .90) 40%, transparent 74%),
-                /* layer B — mid */
+                /* layer B, mid */
             radial-gradient(1.7px 1.7px at 8% 29%, rgba(255, 255, 255, .78), transparent),
             radial-gradient(1.8px 1.8px at 45% 23%, rgba(219, 234, 254, .78), transparent),
             radial-gradient(1.8px 1.8px at 72% 35%, rgba(255, 241, 214, .72), transparent),
             radial-gradient(1.8px 1.8px at 50% 49%, rgba(255, 255, 255, .74), transparent),
             radial-gradient(1.7px 1.7px at 84% 51%, rgba(255, 255, 255, .70), transparent),
             radial-gradient(1.7px 1.7px at 40% 57%, rgba(255, 255, 255, .68), transparent),
-                /* layer B — faint */
+                /* layer B, faint */
             radial-gradient(1.3px 1.3px at 22% 25%, rgba(255, 255, 255, .62), transparent),
             radial-gradient(1.3px 1.3px at 48% 8%, rgba(219, 234, 254, .62), transparent),
             radial-gradient(1.3px 1.3px at 75% 17%, rgba(255, 255, 255, .62), transparent),
@@ -260,13 +260,13 @@
             font-weight: 600;
         }
 
-        /* navbar — flat */
+        /* navbar, flat */
         .navbar {
             background-color: var(--neb-surface);
             border-bottom: 1px solid var(--neb-border) !important;
         }
 
-        /* buttons — flat */
+        /* buttons, flat */
         .btn {
             border-radius: .25rem;
             transition: background-color .12s ease, border-color .12s ease, color .12s ease;
@@ -290,7 +290,7 @@
             box-shadow: 0 0 0 2px var(--neb-bg), 0 0 0 4px rgba(45, 212, 191, .55);
         }
 
-        /* cards — flat, bordered, accent top edge */
+        /* cards, flat, bordered, accent top edge */
         .card {
             background-color: var(--neb-surface);
             border: 1px solid var(--neb-border);

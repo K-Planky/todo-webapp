@@ -55,7 +55,7 @@ public class RegisterServlet extends HttpServlet implements Routable, UserServic
             return;
         }
 
-        req.getSession().setAttribute("flashMessage", "Account created — please log in.");
+        req.getSession().setAttribute("flashMessage", "Account created, please log in.");
         resp.sendRedirect(req.getContextPath() + "/login");
     }
 
