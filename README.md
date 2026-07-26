@@ -36,6 +36,8 @@ Servlet / Filter  ->  Service  ->  Repository (DAO)  ->  JDBC + HikariCP  ->  Po
 - `Webapp.main()` is the composition root: it builds the one pooled `DataSource`, then the repositories, then the services, and injects them.
 - Servlets receive only the services they actually use, through small capability interfaces (`SecurityServiceAware`, `UserServiceAware`, `TodoServiceAware`) resolved by `ServletRouter`. No servlet is handed a collaborator it does not need.
 - All SQL uses `PreparedStatement` inside try-with-resources, scoped to the current user.
+- Every state-changing POST carries a per-session CSRF token, checked by a filter mapped ahead of
+  the auth filter, so a forged request is refused rather than redirected to the login page.
 
 ## Running it
 
@@ -63,6 +65,19 @@ Requires Java 21+, Maven, and a PostgreSQL database.
 The app starts embedded Tomcat and serves the site locally. It applies `db/schema.sql` on
 startup, so an empty database is fine; the script is `IF NOT EXISTS` throughout and a boot
 against an existing database changes nothing.
+
+### Tests
+
+```bash
+mvn test
+```
+
+51 tests. The repository and schema tests run against a real PostgreSQL via Testcontainers, so
+they need Docker; without it they skip rather than fail. They cover the places where a regression
+would be a vulnerability rather than a bug: that one user cannot read, edit, toggle or delete
+another's todos (checked against a real database, because that rule lives in the SQL), that the
+CSRF filter refuses anything without a valid token, that bcrypt is wired at cost 12, and that a
+login for an unknown user still costs a hash so timing does not reveal who is registered.
 
 ### With Docker
 
