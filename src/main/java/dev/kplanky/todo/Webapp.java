@@ -9,9 +9,11 @@ import dev.kplanky.todo.service.*;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.valves.RemoteIpValve;
 import org.apache.tomcat.util.descriptor.web.ErrorPage;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
+import org.apache.tomcat.util.http.Rfc6265CookieProcessor;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -43,6 +45,17 @@ public class Webapp {
         tomcat.setPort(port());
         tomcat.getConnector();
 
+        // In production a TLS-terminating proxy sits in front, so the connection Tomcat sees is
+        // plain HTTP. Without this valve request.isSecure() is false, the session cookie goes out
+        // without the Secure flag, and one http:// navigation leaks JSESSIONID in cleartext.
+        // The valve reads X-Forwarded-Proto (which the proxy sets) and fixes both that and the
+        // client IP in the logs. protocolHeader has no default, so it must be named explicitly.
+        // internalProxies defaults to the private ranges, which covers the docker network the
+        // proxy reaches us on, and nothing else can reach this port.
+        RemoteIpValve proxyValve = new RemoteIpValve();
+        proxyValve.setProtocolHeader("X-Forwarded-Proto");
+        tomcat.getEngine().getPipeline().addValve(proxyValve);
+
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
         UserRepository userRepository = new UserRepository(dataSource);
         UserService userService = new UserService(userRepository, passwordEncoder);
@@ -54,6 +67,15 @@ public class Webapp {
         ServletRouter servletRouter = new ServletRouter(securityService, userService, todoService);
 
         Context ctx = tomcat.addWebapp("", TomcatEnvironment.getDocBase().getAbsolutePath());
+
+        // Lax keeps the session cookie off cross-site POSTs, which is what a CSRF against /add,
+        // /edit, /delete or /toggle would need. Chrome defaults to Lax already; Firefox does not,
+        // so state it rather than relying on the browser. Tomcat adds Secure and HttpOnly itself
+        // once the request is seen as HTTPS, see the RemoteIpValve above.
+        Rfc6265CookieProcessor cookieProcessor = new Rfc6265CookieProcessor();
+        cookieProcessor.setSameSiteCookies("Lax");
+        ctx.setCookieProcessor(cookieProcessor);
+
         servletRouter.init(ctx);
 
         AuthFilter authFilter = new AuthFilter(securityService);
