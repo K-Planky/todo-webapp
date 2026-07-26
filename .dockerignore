@@ -1,0 +1,11 @@
+# Keep the build context small. The image build COPYs pom.xml, src/ and db/ only.
+target/
+.git/
+.github/
+.idea/
+.claude/
+deploy/
+docs/
+assets/
+*.md
+.env

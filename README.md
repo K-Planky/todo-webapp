@@ -41,13 +41,7 @@ Servlet / Filter  ->  Service  ->  Repository (DAO)  ->  JDBC + HikariCP  ->  Po
 
 Requires Java 21+, Maven, and a PostgreSQL database.
 
-1. Create the schema:
-
-   ```bash
-   psql "$DB_URL" -f db/schema.sql
-   ```
-
-2. Set the database connection through environment variables (nothing is hardcoded):
+1. Set the database connection through environment variables (nothing is hardcoded):
 
    ```bash
    export DB_URL="jdbc:postgresql://localhost:5432/todo"
@@ -55,14 +49,46 @@ Requires Java 21+, Maven, and a PostgreSQL database.
    export DB_PASSWORD="your_password"
    ```
 
-3. Build and run:
+   Instead of a whole `DB_URL` you can supply `DB_HOST`, `DB_NAME` and optionally `DB_PORT`
+   (default `5432`), which is what the container deployment does. `PORT` sets the listen port,
+   default `8080`.
+
+2. Build and run:
 
    ```bash
    mvn clean package
    java -jar target/todo-webapp-1.0.0-jar-with-dependencies.jar
    ```
 
-The app starts embedded Tomcat and serves the site locally.
+The app starts embedded Tomcat and serves the site locally. It applies `db/schema.sql` on
+startup, so an empty database is fine; the script is `IF NOT EXISTS` throughout and a boot
+against an existing database changes nothing.
+
+### With Docker
+
+```bash
+docker build -t todo-webapp .
+docker run --rm -p 8080:8080 \
+  -e DB_HOST=... -e DB_NAME=todo -e DB_USER=todo -e DB_PASSWORD=... \
+  todo-webapp
+```
+
+## Deployment
+
+Live at **https://todo.kplanky.dev**.
+
+Pushing to `main` runs CI (`.github/workflows/ci.yml`); on success `deploy.yml` builds a
+`linux/amd64` image, pushes it to `ghcr.io/k-planky/todo-webapp:<sha>`, and rolls the stack over
+on the VPS. Everything the server needs is versioned in [`deploy/`](deploy):
+
+| File | Where it lands |
+|---|---|
+| `deploy/compose.yaml` | `/srv/apps/todo/compose.yaml`, the app plus its own Postgres |
+| `deploy/site.caddy` | `/srv/edge/sites/todo.caddy`, the route on the shared edge proxy |
+| `deploy/env.example` | template for `/srv/apps/todo/.env`, which holds the secrets and is never committed |
+
+The app publishes no host ports of its own: the shared Caddy edge terminates TLS and reaches it
+over the `edge` docker network by the alias `todo`. The database sits on an internal network only.
 
 ## License
 

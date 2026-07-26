@@ -1,0 +1,11 @@
+# Edge route. Deployed to /srv/edge/sites/todo.caddy on the VM, then picked up by
+# `docker exec edge-caddy caddy reload --config /etc/caddy/Caddyfile`.
+#
+# `todo` is the app's alias on the edge network (see compose.yaml), not a container name.
+# TLS for this hostname is provisioned automatically on first request.
+# Keep `log`: Caddy access logging is per site block, there is no global switch.
+todo.kplanky.dev {
+	log
+	encode zstd gzip
+	reverse_proxy todo:8080
+}

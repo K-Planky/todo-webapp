@@ -1,0 +1,58 @@
+# CI: the build gate. Deploy.yml keys off a successful run of this workflow on main, so the
+# workflow NAME below is load-bearing, do not rename it without updating deploy.yml.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+# Cancel superseded runs on the same ref to save runner minutes.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (mvn package)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build the fat JAR
+        run: mvn -B -ntp clean package
+
+      - name: Check the schema is on the classpath
+        # Schema.apply() reads /db/schema.sql at startup, and the pom packages it through a
+        # non-default resource path. A silent packaging change would only surface as a failed
+        # boot in production, so assert it here instead.
+        run: |
+          set -euo pipefail
+          jar=$(ls target/todo-webapp-*-jar-with-dependencies.jar)
+          unzip -l "$jar" | grep -q 'db/schema.sql'
+
+  image:
+    name: Build the image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: docker/setup-buildx-action@v3
+
+      # Build only. Pushing is deploy.yml's job, and only for main.
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

@@ -113,6 +113,15 @@
                     <include>webapp/**/*</include>
                 </includes>
             </resource>
+            <resource>
+                <!-- Package the one schema so Schema.apply() can run it at startup. Same file
+                     psql reads, so there is no second copy to drift. -->
+                <directory>db</directory>
+                <targetPath>db</targetPath>
+                <includes>
+                    <include>schema.sql</include>
+                </includes>
+            </resource>
         </resources>
     </build>
 </project>

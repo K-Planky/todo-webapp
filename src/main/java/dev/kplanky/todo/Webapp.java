@@ -1,6 +1,7 @@
 package dev.kplanky.todo;
 
 import dev.kplanky.todo.db.Database;
+import dev.kplanky.todo.db.Schema;
 import dev.kplanky.todo.filter.AuthFilter;
 import dev.kplanky.todo.repository.TodoRepository;
 import dev.kplanky.todo.repository.UserRepository;
@@ -20,6 +21,8 @@ import java.sql.Statement;
 
 public class Webapp {
 
+    private static final int DEFAULT_PORT = 8080;
+
     public static void main(String[] args) {
 
         DataSource dataSource = Database.createDataSource();
@@ -32,10 +35,12 @@ public class Webapp {
             throw new IllegalStateException("Cannot reach the database at startup", e);
         }
 
+        Schema.apply(dataSource);
+
         TomcatEnvironment.init();
         Tomcat tomcat = new Tomcat();
         tomcat.setBaseDir(TomcatEnvironment.getWorkDir().getAbsolutePath());
-        tomcat.setPort(8082);
+        tomcat.setPort(port());
         tomcat.getConnector();
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
@@ -74,6 +79,18 @@ public class Webapp {
             throw new RuntimeException(e);
         }
         tomcat.getServer().await();
+    }
+
+    private static int port() {
+        String value = System.getenv("PORT");
+        if (value == null || value.isBlank()) {
+            return DEFAULT_PORT;
+        }
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("PORT is not a number: " + value, e);
+        }
     }
 
 }
