@@ -455,6 +455,7 @@
                 <i class="fa-regular fa-user me-1"></i><c:out value="${username}"/>
             </span>
             <form method="post" action="${pageContext.request.contextPath}/logout" class="m-0 d-flex align-items-center">
+                <input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>">
                 <button type="submit" class="btn btn-sm btn-link text-secondary text-decoration-none p-0">
                     Log out
                 </button>

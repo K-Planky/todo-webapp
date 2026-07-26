@@ -3,12 +3,14 @@ package dev.kplanky.todo;
 import dev.kplanky.todo.db.Database;
 import dev.kplanky.todo.db.Schema;
 import dev.kplanky.todo.filter.AuthFilter;
+import dev.kplanky.todo.filter.CsrfFilter;
 import dev.kplanky.todo.repository.TodoRepository;
 import dev.kplanky.todo.repository.UserRepository;
 import dev.kplanky.todo.service.*;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.valves.ErrorReportValve;
 import org.apache.catalina.valves.RemoteIpValve;
 import org.apache.tomcat.util.descriptor.web.ErrorPage;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
@@ -56,10 +58,19 @@ public class Webapp {
         proxyValve.setProtocolHeader("X-Forwarded-Proto");
         tomcat.getEngine().getPipeline().addValve(proxyValve);
 
+        // The default error page footer prints the exact container version, which on a public host
+        // just tells a scanner which CVE list to work through. The status message is still shown.
+        // StandardHost only installs its own error valve if the pipeline has none, so this
+        // replaces it rather than stacking with it.
+        ErrorReportValve errorValve = new ErrorReportValve();
+        errorValve.setShowServerInfo(false);
+        tomcat.getHost().getPipeline().addValve(errorValve);
+
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
         UserRepository userRepository = new UserRepository(dataSource);
         UserService userService = new UserService(userRepository, passwordEncoder);
-        SecurityService securityService = new SecurityService(userService);
+        CsrfService csrfService = new CsrfService();
+        SecurityService securityService = new SecurityService(userService, csrfService);
 
         TodoRepository todoRepository = new TodoRepository(dataSource);
         TodoService todoService = new TodoService(todoRepository);
@@ -77,6 +88,21 @@ public class Webapp {
         ctx.setCookieProcessor(cookieProcessor);
 
         servletRouter.init(ctx);
+
+        // Filters run in the order their mappings are added, so CSRF is checked before auth: a
+        // forged POST is then refused with 403 rather than bounced to the login page, and /login
+        // and /register are covered even though AuthFilter treats them as public.
+        CsrfFilter csrfFilter = new CsrfFilter(csrfService);
+
+        FilterDef csrfFilterDef = new FilterDef();
+        csrfFilterDef.setFilterName("CsrfFilter");
+        csrfFilterDef.setFilter(csrfFilter);
+        ctx.addFilterDef(csrfFilterDef);
+
+        FilterMap csrfFilterMap = new FilterMap();
+        csrfFilterMap.setFilterName("CsrfFilter");
+        csrfFilterMap.addURLPattern("/*");
+        ctx.addFilterMap(csrfFilterMap);
 
         AuthFilter authFilter = new AuthFilter(securityService);
 

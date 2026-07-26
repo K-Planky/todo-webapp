@@ -31,6 +31,7 @@
             <li class="list-group-item todo-item d-flex align-items-center gap-3 py-3 px-4${todo.completed ? ' is-done' : ''}">
 
                 <form method="post" action="${pageContext.request.contextPath}/toggle" class="m-0 d-flex">
+                    <input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>">
                     <input type="hidden" name="id" value="${todo.id}">
                     <c:choose>
                         <c:when test="${todo.completed}">

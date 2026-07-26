@@ -9,9 +9,11 @@ import java.util.Optional;
 public class SecurityService {
 
     private final UserService userService;
+    private final CsrfService csrfService;
 
-    public SecurityService(UserService userService) {
+    public SecurityService(UserService userService, CsrfService csrfService) {
         this.userService = userService;
+        this.csrfService = csrfService;
     }
 
     public boolean authenticate(String username, String password, HttpServletRequest request) {
@@ -20,6 +22,10 @@ public class SecurityService {
         if (user.isPresent()) {
             HttpSession session = request.getSession();
             request.changeSessionId();
+            // The session id is rotated to defeat fixation; rotate the CSRF token with it for the
+            // same reason. A token minted before login should not carry over into the
+            // authenticated session, since anyone who saw the pre-login one would still know it.
+            csrfService.reset(request);
             session.setAttribute(SessionKeys.USER_ID, user.get().id());
             session.setAttribute(SessionKeys.USERNAME, user.get().username());
             return true;

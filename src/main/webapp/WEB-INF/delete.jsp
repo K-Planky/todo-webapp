@@ -31,6 +31,7 @@
             <i class="fa-solid fa-circle-exclamation me-1"></i>This can't be undone.
         </p>
         <form method="post" action="${pageContext.request.contextPath}/delete">
+            <input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>">
             <input type="hidden" name="id" value="${todo.id}">
             <div class="d-flex justify-content-end gap-2">
                 <a class="btn btn-link text-secondary text-decoration-none"

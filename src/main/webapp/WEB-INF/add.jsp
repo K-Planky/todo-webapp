@@ -20,6 +20,7 @@
         </c:if>
 
         <form method="post" action="${pageContext.request.contextPath}/add">
+            <input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>">
             <div class="mb-4">
                 <label class="form-label" for="title">Title</label>
                 <input class="form-control" id="title" name="title" maxlength="255"

@@ -25,6 +25,7 @@
         </c:if>
 
         <form method="post" action="${pageContext.request.contextPath}/login">
+            <input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>">
             <div class="mb-3">
                 <label class="form-label" for="username">Username</label>
                 <input class="form-control" id="username" name="username" autofocus>
