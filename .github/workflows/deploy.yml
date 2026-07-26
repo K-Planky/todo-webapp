@@ -74,9 +74,14 @@ jobs:
           chmod 600 ~/.ssh/id_deploy
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
           SSH="ssh -i ~/.ssh/id_deploy -o IdentitiesOnly=yes ${DEPLOY_USER}@${DEPLOY_HOST}"
-          # compose.yaml and the Caddy route are versioned in this repo under deploy/
+          # compose.yaml, the Caddy route and the initdb scripts are versioned in this repo under deploy/.
+          # initdb only runs on a FIRST boot against an empty data directory, so shipping it every
+          # time is a no-op for a live stack and is what makes a rebuilt volume come back with the
+          # same least-privilege role.
           scp -i ~/.ssh/id_deploy -o IdentitiesOnly=yes \
             deploy/compose.yaml "${DEPLOY_USER}@${DEPLOY_HOST}:/srv/apps/${APP}/compose.yaml"
+          scp -r -i ~/.ssh/id_deploy -o IdentitiesOnly=yes \
+            deploy/initdb "${DEPLOY_USER}@${DEPLOY_HOST}:/srv/apps/${APP}/"
           scp -i ~/.ssh/id_deploy -o IdentitiesOnly=yes \
             deploy/site.caddy "${DEPLOY_USER}@${DEPLOY_HOST}:/srv/edge/sites/${APP}.caddy"
           $SSH "cd /srv/apps/${APP} && \
