@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   build:
-    name: Build (mvn package)
+    name: Build & test (mvn package)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -28,7 +28,9 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Build the fat JAR
+      - name: Build and test
+        # Runs the unit tests plus the Testcontainers suite against a real Postgres. The runner
+        # provides Docker; on a machine without it those tests skip rather than fail.
         run: mvn -B -ntp clean package
 
       - name: Check the schema is on the classpath
