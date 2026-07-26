@@ -85,10 +85,13 @@ on the VPS. Everything the server needs is versioned in [`deploy/`](deploy):
 |---|---|
 | `deploy/compose.yaml` | `/srv/apps/todo/compose.yaml`, the app plus its own Postgres |
 | `deploy/site.caddy` | `/srv/edge/sites/todo.caddy`, the route on the shared edge proxy |
+| `deploy/initdb/` | `/srv/apps/todo/initdb/`, run once on a fresh volume to create the app's database role |
 | `deploy/env.example` | template for `/srv/apps/todo/.env`, which holds the secrets and is never committed |
 
 The app publishes no host ports of its own: the shared Caddy edge terminates TLS and reaches it
-over the `edge` docker network by the alias `todo`. The database sits on an internal network only.
+over the `edge` docker network by the alias `todo`. The database sits on an internal network only. The
+app connects to it as a non-superuser role that owns only its own tables, so the credential the
+web process holds cannot reach `COPY ... TO PROGRAM` or `pg_read_file`.
 
 ## License
 
